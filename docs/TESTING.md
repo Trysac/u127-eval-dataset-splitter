@@ -1,20 +1,15 @@
 # Testing
 
-## Running
+## Files
 
-```sh
-uv run pytest --cov=eval_dataset_splitter   # tests with coverage report
-uv run python scripts/check.py      # every gate, as CI and the factory run it
-```
+- `tests/test_eval_dataset_splitter.py`: Covers the full acceptance suite.
 
-## Policy
+## Coverage
 
-- Branch coverage of `src/eval_dataset_splitter` must stay at or above 80 %; the gate fails below it.
-- Tests exercise the public API (`import eval_dataset_splitter`) and assert every observable effect:
-  return values, raised exceptions and their messages.
-- Each bug fix starts with a failing test that reproduces it.
-- Tests are deterministic: no network, no wall clock, no dependence on test order.
-
-## Layout
-
-`tests/test_<module>.py` mirrors each public module. Shared fixtures go in `tests/conftest.py`.
+- 100-row splits: Verification of partition counts and reproducibility with identical seeds.
+- Group leakage: Validation that `group_by` constraints are respected; `check_leakage` detection.
+- Text deduplication: Using union-find to ensure near-duplicates share partitions.
+- Stratification: Ensuring label distribution matches requested ratios.
+- Validation: Testing `SplitError` conditions (invalid ratios, missing fields).
+- Limits: Verification of `too_many_rows` and `field_too_large` error triggers.
+- CLI: Testing input/output file handling and standard error reporting for invalid JSON.

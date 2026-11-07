@@ -1,29 +1,9 @@
 # Architecture
 
-## Purpose
+## Pipeline
 
-`trysac-eval-dataset-splitter` is a small, dependency-free Python library: Split golden evaluation datasets into train, dev and test partitions by stratum with seeded hashing, group-aware and near-duplicate leakage prevention
-
-## Shape
-
-```text
-caller code --> eval_dataset_splitter (public API in __init__.py)
-                    |
-                    +-- pure functions, no I/O, no global state
-```
-
-- **Public API**: the names listed in `__all__` of `src/eval_dataset_splitter/__init__.py`. Anything else is
-  internal and may change without a major version.
-- **Errors**: invalid input raises built-in exceptions (`ValueError`, `TypeError`) with a clear
-  message; the library never prints or exits.
-- **Side effects**: none. If a feature needs I/O, isolate it in its own module behind a small
-  interface and record the choice in an ADR.
-
-## Quality contract
-
-`scripts/check.py` is the single definition of the gates; `fabrica.json` tells the factory and CI
-how to run it. See [TESTING.md](TESTING.md).
-
-## Decisions
-
-Architecture decisions are recorded in [decisions/](decisions/) as numbered ADRs.
+1. **Validation**: Checks `ratios` sum, non-negativity, and input size constraints.
+2. **Group Identification**: Rows are grouped by key. If `text_field` is set, strings are normalized (casefold, whitespace collapse) and unified using Disjoint Set Union (union-find) to merge similar text.
+3. **Stratum Association**: Groups inherit the stratum of their first observed row.
+4. **Partition Assignment**: Per stratum, groups are ordered by `sha256(seed + \x00 + group_key)`. Groups are assigned to the partition with the maximum `(target_ratio * total_stratum_rows) - assigned_count`.
+5. **Output**: Rows are returned in original input order within their partitions.

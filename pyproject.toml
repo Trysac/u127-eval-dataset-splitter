@@ -19,6 +19,9 @@ classifiers = [
 ]
 dependencies = []
 
+[project.scripts]
+eval-dataset-splitter = "eval_dataset_splitter.__main__:main"
+
 [project.urls]
 Homepage = "https://github.com/Trysac/u127-eval-dataset-splitter"
 Source = "https://github.com/Trysac/u127-eval-dataset-splitter"

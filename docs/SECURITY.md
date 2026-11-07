@@ -1,19 +1,8 @@
-# Security notes
+# Security Model
 
-## Threat model
+## Threat Model & Defenses
 
-`trysac-eval-dataset-splitter` is a pure library without I/O. The main risks are:
-
-- **Supply chain**: a compromised dependency or CI action. Mitigation: no runtime dependencies,
-  Dependabot weekly updates, actions pinned to major versions, minimal workflow permissions.
-- **Leaked secrets**: tokens committed by mistake. Mitigation: `gitleaks` runs in the local gates
-  and in CI; `.env` files are git-ignored.
-- **Untrusted input**: callers may pass hostile strings. Mitigation: validate input and fail with
-  explicit exceptions; never `eval`, `exec` or deserialize untrusted data.
-
-## Publishing
-
-Releases are published to PyPI with trusted publishing (OIDC) when available, never with a
-long-lived token stored in the repository.
-
-To report a vulnerability, see [SECURITY.md](../SECURITY.md).
+- **Unbounded Resource Usage**: The code defends against memory exhaustion by enforcing `max_rows` (default 1,000,000) and `max_field_chars` (default 100,000) per field.
+- **Malformed Inputs**: The CLI restricts JSONL line length to 1,000,000 characters to mitigate buffer/parsing issues.
+- **Logging**: The application utilizes `logging.NullHandler` by default. Row content is never logged to avoid data leakage into sensitive logs.
+- **Insecure Hashing**: Python's `hash()` is non-deterministic across processes. The library strictly uses `hashlib.sha256` for partition assignment to ensure cross-runtime stability.
