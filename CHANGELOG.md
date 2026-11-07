@@ -9,4 +9,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Implement deterministic eval dataset splitting with group-awareness, stratum balancing, union-find duplicate merging, and CLI utility.
 - Initial project structure from the factory utility template.
