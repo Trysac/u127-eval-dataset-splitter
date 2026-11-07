@@ -1,0 +1,1 @@
+{"lang": "python", "package": "trysac-eval-dataset-splitter", "commands": {"install": [["uv", "sync"]], "check": [["uv", "run", "python", "scripts/check.py"]]}}
